@@ -26,9 +26,13 @@ def bfs(x, target):
         calc=D(x)
         length=len(result[calc])
         if len(tmp) < length or length==0:
-            result[calc] = tmp
-            q.append(calc)
-            visited[calc]=1
+            # x가 0이면 제끼기
+            if x == 0:
+                pass
+            else:
+                result[calc] = tmp
+                q.append(calc)
+                visited[calc]=1
         
         tmp = result[x]+'S'
         calc=S(x)
