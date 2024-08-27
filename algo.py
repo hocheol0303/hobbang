@@ -1,42 +1,96 @@
+'''
+D: *2 %10000
+S: n-1, 0->9999
+L: appendleft(pop)
+R: append(popleft)
+
+
+컨닝했숴: 다이나믹 프로그래밍으로 탈출조건 visited[target] == 1인 반복문
+'''
 import sys
 from collections import deque
 
-def bfs(idx, input, lst):
-    q=deque()
+def bfs(x, target):
+    global visited, result
+    # 방문한적 있으면 나가
+    if visited[target] == 1:
+        return
+    q = deque()
+    q.append(x)
 
-    # list.index() 여러개
-    for i, value in enumerate(input[idx]): 
-        if value == 1:
-            q.append(i)
-            lst[idx][i]=1
+    # target에 방문할 때까지 찾아가
+    # 최소한의 명령어 나열
+    while visited[target] == 0:
+        x = q.popleft()
+        tmp = result[x]+'D'
+        calc=D(x)
+        length=len(result[calc])
+        if len(tmp) < length or length==0:
+            result[calc] = tmp
+            q.append(calc)
+            visited[calc]=1
+        
+        tmp = result[x]+'S'
+        calc=S(x)
+        length=len(result[calc])
+        if len(tmp) < length or length==0:
+            result[calc] = tmp
+            q.append(calc)
+            visited[calc]=1
+        
+        tmp = result[x]+'L'
+        calc=L(x)
+        length=len(result[calc])
+        if len(tmp) < length or length==0:
+            result[calc] = tmp
+            q.append(calc)
+            visited[calc]=1
+        
+        tmp = result[x]+'R'
+        calc=R(x)
+        length=len(result[calc])
+        if len(tmp) < length or length==0:
+            result[calc] = tmp
+            q.append(calc)
+            visited[calc]=1
+            
+def D(x):
+    return (x*2)%10000
 
-    # lst[idx]에 방문표시 할거야
-    while q:
-        i=q.popleft()
-        next=[j for j, value in enumerate(input[i]) if value==1 and lst[idx][j] == 0]
+def S(x):
+    return 9999 if x==1 else x-1
 
-        for j in next:
-            if lst[idx][j] == 0:
-                q.append(j)
-                lst[idx][j]=1
+def L(x):
+    x = list(str(x))
+    x.append(x.pop(0))
+    result=''
+    for i in x:
+        result+=i
+    
+    return int(result)
 
+def R(x):
+    x = list(str(x))
+    x.insert(0, x.pop())
+
+    result=''
+    for i in x:
+        result+=i
+    return int(result)
+
+# print(R(1234))
+# print(L(1234))
+# print(D(4000), D(5000))
+# print(S(1), S(2))
 
 n = int(sys.stdin.readline())
-input=[]
-for i in range(n):
-    input.append(list(map(int, sys.stdin.readline().split())))
 
-lst=[[0]*n for i in range(n)]
+# visited[target]이 1 될 때까지 반복문 돌릴거야 ==> bfs로 했솨
 
-for i in range(n):
-    bfs(i, input, lst)
+for _ in range(n):
+    visited = [0] * 10001
+    result = ['']*10001
+    x,target=map(int,sys.stdin.readline().split())
+    bfs(x, target)
 
-result=''
-for i in range(n):
-    for j in range(n):
-        result+=str(lst[i][j])
-        if j < n-1:
-            result+=' '
-    result+='\n'
-
-print(result)
+    print(result[target])
