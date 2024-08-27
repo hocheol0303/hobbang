@@ -58,7 +58,7 @@ def D(x):
     return (x*2)%10000
 
 def S(x):
-    return 9999 if x==1 else x-1
+    return 9999 if x==0 else x-1
 
 def L(x):
     x = list(str(x))
