@@ -7,7 +7,7 @@ R: append(popleft)
 
 컨닝했숴: 다이나믹 프로그래밍으로 탈출조건 visited[target] == 1인 반복문
 L, R 4자리수 훼이크 개쉐이야
-문자열 += 문제????제발요
+문자열 += 문제????제발요 휴
 '''
 import sys
 from collections import deque
