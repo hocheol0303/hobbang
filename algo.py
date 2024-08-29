@@ -8,32 +8,19 @@
 최대로 놓고 min()으로 쭉쭉쭉
 '''
 import sys
-# import time
 
-lst= [4] * 50001
-i=1
 n=int(sys.stdin.readline())
-# start=time.time()
+
+lst= [1 if ((i**0.5)*10)%10==0 else 4 for i in range(50001)]
+
 lst[1]=1
 lst[2]=2
 lst[3]=3
 
-# 26 : [5, 1]={25,1} / [4, 3, 1]={4^2,10}
-while i <= n:
-    for j in range(1, i):
-        if i==22500 and j==5032:
-            print()
-
-        if i**2+j**2 <= n:
-            lst[i**2+j**2]=2
-        if i**2 <= n:
-            lst[i**2]=1
-        if j**2 <= n:
-            lst[j**2]=1
-        if i+j**2 <= n:
-            lst[i+j**2] = min(lst[i+j**2], lst[i]+1)
-    i+=1
+for i in range(4, n+1):
+    j=1
+    while(j**2) <= i:
+        lst[i] = min(lst[i], lst[i-j**2]+1)
+        j+=1
 
 print(lst[n])
-# end=time.time()
-# print(end-start)
