@@ -35,5 +35,6 @@ lst=[0]*100001
 
 bfs(n)
 
+# 시작점은 0이죠
 lst[n]=0
 print(lst[k])
