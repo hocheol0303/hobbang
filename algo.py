@@ -1,61 +1,49 @@
 '''
-전체 종이가 모두 같은 색이 아니면 가로세로 반띵해서 4군데로 나눠 다시 탐색
-끝까지 탐색하면 모든 색이 같은색인거로
+가장 빠른 시간
+선택지: +1 / -1 / *2
+0 <= n,k <= 100,000
 '''
-
-def func(row_start, row_end, col_start, col_end):
-    global ones, zeros, lst
-    notation=lst[row_start][col_start]
-
-    #탈출조건: 원소 하나짜리 넘어왔을 때 값 올리고 탈출
-    if row_start == row_end and col_start == col_end:
-        if notation == 1:
-            ones+=1
-            return
-        else:
-            zeros+=1
-            return
-    
-    # 다른거 적발되면 4개로 나눠서 재귀
-    for r in range(row_start, row_end):
-        for c in range(col_start, col_end):
-            if lst[r][c] != notation:
-                r = (row_start+row_end) // 2
-                c = (col_start+col_end) // 2
-                
-                func(row_start, r, col_start, c)
-                func(row_start, r, c, col_end)
-
-                func(r, row_end, col_start, c)
-                func(r, row_end, c, col_end)
-                return
-            
-    # 적발 안됐으면 클-린 -> 값 올려
-    if notation == 1:
-        ones+=1
-    else:
-        zeros+=1
-
-
 import sys
+from collections import deque
 
-n=int(sys.stdin.readline())
-lst=[]
-ones=0
-zeros=0
-for i in range(n):
-    lst.append(list(map(int, sys.stdin.readline().split())))
+def bfs(x, y):
+    global lst, cnt
+    # dx = +1, -1, *2
+    q = deque()
+    q.append(x)
 
-# for i in lst:
-#     print(i)
-row = col = n
+    while q:
+        x=q.popleft()
+        if x >= 100000 or x < 0:
+            continue
+            
+        if cnt[x+1]<3:
+            cnt[x+1]+=1
+            q.append(x+1)
+            lst[x+1]=min(lst[x+1], lst[x]+1)
 
-check=lst[0][0]
+        if cnt[x-1]<3:
+            cnt[x-1]+=1
+            q.append(x-1)
+            lst[x-1]=min(lst[x-1], lst[x]+1)
 
-row_start=col_start=0
-row_end=col_end=n
+        if x*2 < 100000 and cnt[x*2]<3:
+            cnt[x*2]+=1
+            q.append(x*2)
+            lst[x*2]=min(lst[x*2],lst[x]+1)
 
-func(row_start, row_end, col_start, col_end)
+        # 목적지 3번 정도 봤으면 최솟값 나왔을거라 믿어
+        if cnt[y]>=3:
+            return
 
-print(zeros)
-print(ones)
+n,k=map(int,sys.stdin.readline().split())
+lst=[100000]*100001
+
+# 한 2~3번 봤으면 제꺼야하나?
+cnt=[0]*100001
+
+lst[k]=abs(k-n)
+lst[n]=0
+
+bfs(n,k)
+print(lst[k])
