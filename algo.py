@@ -6,7 +6,7 @@
 import sys
 from collections import deque
 
-def bfs(x, y):
+def bfs(x):
     global lst
     # dx = +1, -1, *2
     q = deque()
@@ -25,14 +25,15 @@ def bfs(x, y):
         if x>0 and lst[x-1]==0:
             q.append(x-1)
             lst[x-1]=lst[x]+1
-
     
-        if x!=0 and x*2<100001 and lst[x*2]==0:
+        if x!=0 and x*2<=100000 and lst[x*2]==0:
             q.append(x*2)
             lst[x*2]=lst[x]+1
 
 n,k=map(int,sys.stdin.readline().split())
 lst=[0]*100001
 
-bfs(n,k)
+bfs(n)
+
+lst[n]=0
 print(lst[k])

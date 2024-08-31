@@ -11,6 +11,7 @@ while queue:
     if now-1 > 0 and l[now-1] == 0:
         l[now-1] = l[now]+1
         queue.append(now-1)
+    
     if now+1 <= 100001 and l[now+1] == 0:
         l[now+1] = l[now]+1
         queue.append(now+1)
