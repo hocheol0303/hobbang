@@ -1,40 +1,29 @@
 '''
-가장 빠른 시간
-선택지: +1 / -1 / *2
-0 <= n,k <= 100,000
+순열 공식이 있나봄
+lst[n] = lst[n-1]+lst[n-2]
+이제 뭔지 배우러 가야지
+
+조합으로 결과 쭉 나열 해놓고 결과 사이의 관계 찾아
+1짜리 n, =짜리 m -> (n,m)
+n=1: (1,0): 1
+n=2: (2,0), (0,1): 1 + 1 = 2
+n=3: (3,0), (1,1): 1 + 2C1 = 3
+n=4: (4,0), (2,1), (0,2): 1 + 3C1 + 1 = 5
+n=5: (5,0), (3,1), (1,2): 1 + 4C1 + 3C1 = 8
+
+여기부터 묶어서 나열 필요
+n=6: (6,0), (4,1), (2,2), (0,3): 1 + 5C1 + [3C2 + 3C1] + 1 = 13
+...
 '''
+
 import sys
-from collections import deque
+n = int(sys.stdin.readline())
+lst=[0]*1001
 
-def bfs(x):
-    global lst
-    # dx = +1, -1, *2
-    q = deque()
-    q.append(x)
+lst[1]=1
+lst[2]=2
 
-    while q:
-        x=q.popleft()
-        # if x >= 100000 or x < 0:
-        #     continue
-            
-        if x < 100000:
-            if lst[x+1]==0:
-                q.append(x+1)
-                lst[x+1]=lst[x]+1
+for i in range(3, n+1):
+    lst[i]=lst[i-1]+lst[i-2]
 
-        if x>0 and lst[x-1]==0:
-            q.append(x-1)
-            lst[x-1]=lst[x]+1
-    
-        if x!=0 and x*2<=100000 and lst[x*2]==0:
-            q.append(x*2)
-            lst[x*2]=lst[x]+1
-
-n,k=map(int,sys.stdin.readline().split())
-lst=[0]*100001
-
-bfs(n)
-
-# 시작점은 0이죠
-lst[n]=0
-print(lst[k])
+print(lst[n]%10007)
