@@ -1,29 +1,36 @@
 '''
-순열 공식이 있나봄
-lst[n] = lst[n-1]+lst[n-2]
-이제 뭔지 배우러 가야지
-
-조합으로 결과 쭉 나열 해놓고 결과 사이의 관계 찾아
-1짜리 n, =짜리 m -> (n,m)
-n=1: (1,0): 1
-n=2: (2,0), (0,1): 1 + 1 = 2
-n=3: (3,0), (1,1): 1 + 2C1 = 3
-n=4: (4,0), (2,1), (0,2): 1 + 3C1 + 1 = 5
-n=5: (5,0), (3,1), (1,2): 1 + 4C1 + 3C1 = 8
-
-여기부터 묶어서 나열 필요
-n=6: (6,0), (4,1), (2,2), (0,3): 1 + 5C1 + [3C2 + 3C1] + 1 = 13
-...
+힙에는 양수만 넣고 음수양수 정보를 딕셔너리로 관리
 '''
 
+import heapq
 import sys
-n = int(sys.stdin.readline())
-lst=[0]*1001
+n=int(sys.stdin.readline())
+heap=[]
+info={}
 
-lst[1]=1
-lst[2]=2
+for _ in range(n):
+    input_ = int(sys.stdin.readline())
+    if input_ == 0:
+        if len(heap) == 0:
+            print(0)
+            continue
+        else:
+            output=heapq.heappop(heap)
+            if info[output]['-'] == 0:
+                info[output]['+']-=1
+                print(output)
+            else:
+                info[output]['-']-=1
+                print(-output)
 
-for i in range(3, n+1):
-    lst[i]=lst[i-1]+lst[i-2]
+    else:
+        abs_ = abs(input_)
+        if abs_ not in info.keys():
+            info[abs_]={'+':0, '-':0}
+        
+        heapq.heappush(heap, abs_)
 
-print(lst[n]%10007)
+        if input_ > 0:
+            info[abs_]['+']+=1
+        else:
+            info[abs_]['-']+=1
