@@ -1,7 +1,6 @@
-import sys
-import heapq
+dct={i:{} for i in range(1, 7)}
 
-lst=[]
-for i in sorted([2,7,0,5,8]):
-    print(i)
+dct[1][2]=4
+dct[1][3]=1
 
+print(dct[1].keys()) 
