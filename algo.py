@@ -1,55 +1,42 @@
 '''
-(N,K)-요세푸스 순열
-N명이 원형으로 앉아있음
-K번 사람 지우기 시작해서 그 사람의 오른쪽 K번째 사람 지움
-모든 사람 제거되었을 때 제거된 사람의 순서
+n명의 학생의 키 모두 다름
 
-(7,3): [1,2,3,4,5,6,7]: 3,6,2,7,5,1,4
-
-
-(N,K,M)-반전 요세푸스: M번 지울 때마다 반대 방향으로 돌림
-(7,3,4)
-[1,2,3,4,5,6,7]
-3
-[1,2,4,5,6,7]
-6
-[1,2,4,5,7]
-2
-[1,4,5,7]
-7
-[1,4,5]
-1
-[4,5]
-5
-[4]
-4
+a가 b보다 작으면 a->b로 표시
 '''
 
 import sys
+from collections import deque
 
-n,k,m = map(int,sys.stdin.readline().split())
+def bfs(start):
+    global grp, count
+    visited= [False]*(n+1)
+    q=deque()
+    q.append(start)
 
-lst = [i+1 for i in range(n)]
-result=[]
-# True == 우, False == 좌
-direction=True
-len_=n
-loc=k-1
-count=0
+    while q:
+        n_start = q.popleft()
 
-while lst:
-    result.append(lst.pop(loc))
-    len_-=1
-    if len_==0:
-        break
-    count+=1
-    if count == m:
-        count = 0
-        direction = not direction
-    if direction:
-        loc= (loc-1+k)%len_
-    else:
-        loc= (loc-k+len_)%len_
+        for end in grp[n_start]:
+            q.append(end)
+            if visited[end]:
+                continue
+            else:
+                count[end] += 1
+                count[start]+=1
+                visited[end]=True
 
-for i in result:
-    print(i)
+n, m = map(int,sys.stdin.readline().split())
+
+grp={i:[] for i in range(1,n+1)}
+count=[0]*(n+1)
+
+for i in range(m):
+    start,end = map(int,sys.stdin.readline().split())
+    grp[start].append(end)
+
+# 모든 노드를 출발지로써 보고 출발지 - 도착지 관계만 볼거여
+# 최종 도착지로 도달할 때의 중간 노드들은 카운트 안들어가
+for i in range(1,n+1):
+    bfs(i)
+
+print(count.count(n-1))
