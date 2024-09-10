@@ -1,42 +1,37 @@
 '''
-n명의 학생의 키 모두 다름
-
-a가 b보다 작으면 a->b로 표시
+컨닝 딱 대
+플로이드 워셜 : 그래프에서 가능한 모든 노드 쌍에 대해 최단거리를 구하는 알고리즘
+    3중 for문으로 (출발지-도착지), (출발지-경유지)+(경유지-도착지) 중 최단거리를 비교하는 것
 '''
 
 import sys
-from collections import deque
-
-def bfs(start):
-    global grp, count
-    visited= [False]*(n+1)
-    q=deque()
-    q.append(start)
-
-    while q:
-        n_start = q.popleft()
-
-        for end in grp[n_start]:
-            q.append(end)
-            if visited[end]:
-                continue
-            else:
-                count[end] += 1
-                count[start]+=1
-                visited[end]=True
 
 n, m = map(int,sys.stdin.readline().split())
 
-grp={i:[] for i in range(1,n+1)}
-count=[0]*(n+1)
+grp=[[float('inf') for j in range(n+1)] for i in range(n+1)]
 
 for i in range(m):
-    start,end = map(int,sys.stdin.readline().split())
-    grp[start].append(end)
+    start, end = map(int , sys.stdin.readline().split())
+    grp[start][end]=1
 
-# 모든 노드를 출발지로써 보고 출발지 - 도착지 관계만 볼거여
-# 최종 도착지로 도달할 때의 중간 노드들은 카운트 안들어가
-for i in range(1,n+1):
-    bfs(i)
 
-print(count.count(n-1))
+# 경유지반복(출발지반복(도착지반복)): 정해진 규칙임
+for i in range(1, n+1):         # 경유지
+    for j in range(1, n+1):     # 출발지
+        for k in range(1, n+1): # 도착지
+            # 출발-도착 > 출발-경유 + 경유-도착 -> 업데이트
+            if grp[j][k] > grp[j][i] + grp[i][k]:
+                grp[j][k] = grp[j][i] + grp[i][k]
+
+result = 0
+
+for i in range(1, n+1):
+    cnt=0
+    for j in range(1, n+1):
+        if grp[i][j] != float('inf') or grp[j][i] != float('inf'):
+            cnt+=1
+
+    if cnt == n-1:
+        result+=1
+
+print(result)
