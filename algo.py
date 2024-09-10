@@ -31,3 +31,15 @@ while index<(m-1):
         index+=1
         iters=0
 print(result)
+
+##################################################
+
+index=0
+result=0
+while index < m-1:
+    if s[index:index+n*2+1]==p:########################################################## 여기서 O(n*m)이 발생 -> 개느려짐ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ
+        index+=2
+        result+=1
+    else:
+        index+=1
+print(result)
