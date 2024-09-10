@@ -25,7 +25,7 @@ for i in range(m):
     start, end = map(int , sys.stdin.readline().split())
     grp[start][end]=1
 
-# 각 경유지별로 출발지-도착지 연결 되어 있으면
+# 각 경유지별로 출발지-경유지-도착지 연결 되어 있으면 표시해줘
 for middle in range(1, n+1):
     for start in range(1, n+1):
         for end in range(1, n+1):
