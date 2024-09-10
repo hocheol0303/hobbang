@@ -1,5 +1,4 @@
-from collections import deque
-q=deque()
-tmp=True
-tmp = not tmp
-print((-2)%2)
+q=list('IO'*3).append('I')
+q.append('I')
+print(q)
+print(''.join(q))
