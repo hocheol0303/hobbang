@@ -6,24 +6,32 @@
 
 import sys
 
+
+def func(start):
+    global grp
+    n_start=0
+    for i in grp[start]:
+        if grp[start][i] != float('inf'):
+            grp[i][start]=1
+
+
+
+
 n, m = map(int,sys.stdin.readline().split())
 
-grp=[[float('inf') for j in range(n+1)] for i in range(n+1)]
+grp=[[0 for j in range(n+1)] for i in range(n+1)]
 
 for i in range(m):
     start, end = map(int , sys.stdin.readline().split())
     grp[start][end]=1
 
+# 각 경유지별로 출발지-도착지 연결 되어 있으면
+for middle in range(1, n+1):
+    for start in range(1, n+1):
+        for end in range(1, n+1):
+            if grp[start][middle] and grp[middle][end]:
+                grp[start][end]=1
 
-
-# 출발 - 도착 최단거리 저장 행은 출발지정보
-# 경유지반복(출발지반복(도착지반복)): 정해진 규칙임
-for i in range(1, n+1):         # 경유지
-    for j in range(1, n+1):     # 출발지
-        for k in range(1, n+1): # 도착지
-            # 출발-도착 > 출발-경유 + 경유-도착 -> 업데이트
-            if grp[j][k] > grp[j][i] + grp[i][k]:
-                grp[j][k] = grp[j][i] + grp[i][k]
 
 result = 0
 
@@ -31,8 +39,7 @@ result = 0
 for i in range(1, n+1):
     cnt=0
     for j in range(1, n+1):
-        if grp[i][j] != float('inf') or grp[j][i] != float('inf'):   # 오고가고를 모두 체크
-            cnt+=1
+        cnt+= grp[i][j] + grp[j][i]
 
     if cnt == n-1:
         result+=1
