@@ -1,45 +1,46 @@
 '''
-n: IOI의 'O' 개수
-m: s의 길이
-s: 문자열
+n = 과일개수
+lst = 꽂음
+
+코드 해석하고 제출하세ㅛㅇ: https://blog.everdu.com/419
 '''
 
 import sys
 
 n=int(sys.stdin.readline())
-m=int(sys.stdin.readline())
-s=sys.stdin.readline().rstrip()
+lst=list(map(int,sys.stdin.readline().split()))
 
-# 컨닝
-p='IOI'
-index=0
-iters=0
+front, rear = 0, 1
 result=0
+next_front=0
 
-# 뭔지 알겠는데 50점 짜리가 왜 50점짜린지 모르겠음 이게 더 빨라?
-while index<(m-1):
-    # IOI의 개수를 세
-    # IOIOI로 쭊쭊쭈꾸ㅉ꾸쭊 이어져 있으면 맨 앞의 IO 제외해가면서 얼마나 연결되어 있는지 아세요
-    # 그 개수가 n과 같으면 답 += 1
-    if s[index:index+3] == p:
-        index+=2
-        iters+=1
-        if iters==n:
-            result+=1
-            iters-=1
+species=[lst[front]]
+
+while rear<n:
+    # 종이 하나일 때 새로운 종이 생기면 종 리스트에 추가
+    if len(species) == 1 and lst[rear] not in species:
+        species.append(lst[rear])
+    # 아니면 여
     else:
-        index+=1
-        iters=0
-print(result)
+        # 이미 2종 들고 있는데 새로운 종이 나왔어
+        if lst[rear] not in species:
+            # 지금까지의 최대 길이를 저장해놔
+            result = max(result, rear-front)
 
-##################################################
+            for i in range(len(species)):
+                if species[i] != lst[next_front]:
+                    species.pop(i)
+                    break
+            
+            species.append(lst[rear])
+            front = next_front
 
-index=0
-result=0
-while index < m-1:
-    if s[index:index+n*2+1]==p:########################################################## 여기서 O(n*m)이 발생 -> 개느려짐ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ
-        index+=2
-        result+=1
-    else:
-        index+=1
+    # 다르면 다음 단계에서 위 else문 실행할거여
+    # next_front는 새로운 종의 첫 index
+    if lst[rear-1] != lst[rear]:
+        next_front=rear
+
+    rear+=1
+
+result=max(result, n-front)
 print(result)

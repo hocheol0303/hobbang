@@ -1,4 +1,6 @@
-q=list('IO'*3).append('I')
-q.append('I')
-print(q)
-print(''.join(q))
+import sys
+lst=[]
+for i in range(3):
+    tmp=int(sys.stdin.read())
+    lst.append(tmp)
+print(lst)
