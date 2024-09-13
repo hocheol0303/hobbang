@@ -1,43 +1,22 @@
 '''
-n = 과일개수
-lst = 꽂음
+두 수를 곱한 뒤 최대공약수로 나누면 최소공배수
+유클리드 호제법: 최대 공약수 구하는 방법
+    두 수 A > B
+    A % B = C -> B % C = D -> C % D = E -> ...(나머지가 0이 될 때까지) -> X % Y = Z = 0일 때, A * B // Y = 최소공배수
+
 '''
 
 import sys
+a, b = map(int,sys.stdin.readline().split())
+target=a*b
 
-n=int(sys.stdin.readline())
-lst=list(map(int,sys.stdin.readline().split()))
+if a == 1 or b == 1:
+    print(a*b)
+else:
+    a,b = max(a,b), min(a,b)
 
-front, rear = 0, 1
-result=0
-next_front=0
+    while a % b != 0:
+        # print(a,b)
+        a, b = b, a%b
 
-species=[lst[front]]
-
-while rear<n:
-    # 종이 하나일 때 새로운 종이 생기면 종 리스트에 추가
-    if len(species) == 1 and lst[rear] not in species:
-        species.append(lst[rear])
-    # 아니면 여
-    else:
-        # 이미 2종 들고 있는데 새로운 종이 나왔어
-        if lst[rear] not in species:
-            # 지금까지의 최대 길이를 저장해놔
-            result = max(result, rear-front)
-
-            # next_front가 아닌거 (먼저 들어온거) 골라내ㅏㄹ
-            for i in range(len(species)):
-                if species[i] != lst[next_front]:
-                    species.pop(i)
-                    break
-            
-            species.append(lst[rear])
-            front = next_front
-
-    # next_front는 새로운 종의 첫 index
-    if lst[rear-1] != lst[rear]:
-        next_front=rear
-    rear+=1
-
-result=max(result, n-front)
-print(result)
+    print(target // b)
