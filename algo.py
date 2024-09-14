@@ -21,6 +21,6 @@ while True:
 
 
 # print(lst)
-result = (lst[-1][1] * lst[-2][1]) - (lst[1][1] * lst[2][1] * num_corn)
+result = (lst[-1][1] * lst[-2][1] - lst[1][1] * lst[2][1]) * num_corn
 # print(lst[-1], lst[-2], lst[1], lst[2], num_corn)
 print(result)
