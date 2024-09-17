@@ -1,26 +1,29 @@
-'''
-계단을 찾기 리스트 빙빙 돌리면 계단으로 시작하는 모양으로 고정됨 -> 계단으로 고정된 모양의 전, 전전이 온전한 직사각형의 변 2개
-'''
-
+import heapq
 import sys
 
-num_corn=int(sys.stdin.readline())
-num_count=[0]*7
-lst=[]
+n = int(sys.stdin.readline())
+m = int(sys.stdin.readline())
 
-for i in range(6):
-    lst.append(tuple(map(int, sys.stdin.readline().split())))
-    num_count[lst[-1][0]]+=1
+graph = [[] for i in range(n+1)]
 
-while True:
-    if lst[0][0] == lst[2][0] and lst[1][0] == lst[3][0]:
-        break
+for _ in range(m):
+    start, end, cost = map(int, sys.stdin.readline().split())
+    graph[start].append([cost, end])
+
+start_node, end_node = map(int, sys.stdin.readline().split())
+
+heap = [(0, start_node)]
+time = [float('inf')] * (n+1)
+
+while heap:
+    cost, end = heapq.heappop(heap)
+    if time[end] != float('inf'):
+        continue
     else:
-        lst.append(lst.pop(0))
+        time[end] = cost
 
+        for n_cost, n_end in graph[end]:
+            n_cost += cost
+            heapq.heappush(heap, [n_cost, n_end])
 
-
-# print(lst)
-result = (lst[-1][1] * lst[-2][1] - lst[1][1] * lst[2][1]) * num_corn
-# print(lst[-1], lst[-2], lst[1], lst[2], num_corn)
-print(result)
+print(time[end_node])

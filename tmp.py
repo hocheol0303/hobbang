@@ -1,1 +1,3 @@
-print(lst[lst.index(1)+1:].index(1))
+import heapq
+
+print(heapq.heappop([1,2]))
