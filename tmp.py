@@ -1,3 +1,23 @@
-lst = [(2,1), (0,5), (4,4), (5,3), (0,3), (2,5)]
-lst.sort(key=lambda x:(x[0], -x[1]))
-print(lst)
+inlst = input()
+lst = []
+ans = ''
+for i in inlst:
+    if i == '(':
+        lst.append(i)
+    elif i == ')':
+        while lst and lst[-1] != '(':
+            ans += lst.pop()
+        lst.pop()
+    elif i == '*' or i == '/':
+        while lst and (lst[-1] == '*' or lst[-1] == '/'):
+            ans += lst.pop()
+        lst.append(i)
+    elif i == '+' or i == '-':
+        while lst and lst[-1] != '(':
+            ans += lst.pop()
+        lst.append(i)
+    else:
+        ans += i
+while lst:
+    ans += lst.pop()
+print(ans)
