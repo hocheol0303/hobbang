@@ -1,46 +1,39 @@
 import sys
 from collections import deque
 
-def bfs(row, col):
-    global n, m, lst, w, b
-    color = lst[row][col]
-    d_rows = [-1, 1, 0, 0]
-    d_cols = [0, 0, -1, 1]
+def func():
+    global d, shortcuts, dp
     q = deque()
-    q.append((row, col))
-    lst[row][col] = '.'
-    mass = 1
+    q.append(0)
 
     while q:
-        row, col = q.popleft()
-
-        for i in range(4):
-            n_row = row + d_rows[i]
-            n_col = col + d_cols[i]
-
-            if n_row >= m or n_col >= n or n_row < 0 or n_col < 0:
-                continue
-            elif lst[n_row][n_col] != color:
-                continue
-            else:
-                q.append((n_row, n_col))
-                lst[n_row][n_col] = '.'
-                mass += 1
-    
-    dct[color] += mass**2
-
-
-n, m = map(int, sys.stdin.readline().split())
-lst = []
-w = b = 0
-dct = {'W':0, 'B':0}
-for _ in range(m):
-    lst.append(list(map(str, sys.stdin.readline().rstrip())))
-
-for r in range(m):
-    for c in range(n):
-        if lst[r][c] == '.':
+        start = q.popleft()
+        if start >= d:
             continue
-        bfs(r, c)
+        if start in shortcuts.keys():
+            for end, weight in shortcuts[start]:
+                if dp[end] > dp[start]+weight:
+                    dp[end] = dp[start]+weight
+                    q.append(end)
 
-print(dct['W'], dct['B'])
+        if dp[start+1] > dp[start]+1:
+            dp[start+1] = min(dp[start+1], dp[start]+1)
+            q.append(start+1)
+
+n, d = map(int, sys.stdin.readline().split())
+
+dp = [float('inf')]*(d+1)
+dp[0] = 0
+shortcuts = {}
+
+for i in range(n):
+    start, end, weight = map(int, sys.stdin.readline().split())
+    if end > d:
+        continue
+    elif start not in shortcuts.keys():
+        shortcuts[start] = [(end, weight)]
+    else:
+        shortcuts[start].append((end, weight))
+
+func()
+print(dp[-1])
