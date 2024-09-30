@@ -1,39 +1,28 @@
+'''
+백트래킹 첫 문제
+
+1부터 n까지 중복 없는 m개의 수열
+
+모르겠저
+백츄래킹은 DFS 기반 재귀함수
+'''
+
 import sys
-from collections import deque
 
-def func():
-    global d, shortcuts, dp
-    q = deque()
-    q.append(0)
-
-    while q:
-        start = q.popleft()
-        if start >= d:
-            continue
-        if start in shortcuts.keys():
-            for end, weight in shortcuts[start]:
-                if dp[end] > dp[start]+weight:
-                    dp[end] = dp[start]+weight
-                    q.append(end)
-
-        if dp[start+1] > dp[start]+1:
-            dp[start+1] = min(dp[start+1], dp[start]+1)
-            q.append(start+1)
-
-n, d = map(int, sys.stdin.readline().split())
-
-dp = [float('inf')]*(d+1)
-dp[0] = 0
-shortcuts = {}
-
-for i in range(n):
-    start, end, weight = map(int, sys.stdin.readline().split())
-    if end > d:
-        continue
-    elif start not in shortcuts.keys():
-        shortcuts[start] = [(end, weight)]
+def dfs(start):
+    global lst, m
+    # 길이 맞으면 출력하고 나가
+    if len(lst) == m:
+        print(' '.join(map(str, lst)))
+        return
     else:
-        shortcuts[start].append((end, weight))
+        for i in range(start, n+1):
+            if i not in lst:
+                lst.append(i)
+                dfs(i+1)
+                lst.pop()
 
-func()
-print(dp[-1])
+n, m = map(int, sys.stdin.readline().split())
+lst = []
+
+dfs(1)
