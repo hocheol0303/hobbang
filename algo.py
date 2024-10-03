@@ -1,19 +1,17 @@
+'''
+백트래킹인가 했는데 DP래
+'''
+
 import sys
-def dfs(start):
-    global n, m, lst, output
-    if len(output) == m:
-        print(' '.join(map(str, output)))
-    else:
-        for i in range(0, n):
-            if lst[i] in output:
-                continue
-            output.append(lst[i])
-            dfs(i+1)
-            output.pop()
 
-n, m = map(int, sys.stdin.readline().split())
+n = int(sys.stdin.readline())
 
-lst = sorted(list(map(int, sys.stdin.readline().split())))
-output = []
+lst = tuple(map(int, sys.stdin.readline().split()))
+dp = [1]*(n)
 
-dfs(0)
+for i in range(1, n):
+    for j in range(i):
+        if lst[i] > lst[j]:
+            dp[i] = max(dp[i], dp[j]+1)
+
+print(max(dp))
