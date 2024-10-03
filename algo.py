@@ -1,16 +1,19 @@
 import sys
-
 def dfs(start):
-    global lst, m
-    if len(lst) == m:
-        print(' '.join(map(str, lst)))
+    global n, m, lst, output
+    if len(output) == m:
+        print(' '.join(map(str, output)))
     else:
-        for i in range(start, n+1):
-            lst.append(i)
-            dfs(i)
-            lst.pop()
+        for i in range(0, n):
+            if lst[i] in output:
+                continue
+            output.append(lst[i])
+            dfs(i+1)
+            output.pop()
 
 n, m = map(int, sys.stdin.readline().split())
-lst = []
 
-dfs(1)
+lst = sorted(list(map(int, sys.stdin.readline().split())))
+output = []
+
+dfs(0)
