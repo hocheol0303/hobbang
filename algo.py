@@ -1,40 +1,39 @@
 '''
-순서 없는거 처리하는게 포인트
-두 숫자 모두 등장한 적 없을 수 있음
-    만들어져 있는 두 트리를 연결하는 일이 존재할 수 있따. == 누군가 연결되기 전까진 서로 누가 부모일지 모른다.
+중복 숫자 있을 수 있음
+봤던 수열은 또 나오지 않기 -> did에 저장
+같은 인덱스의 수는 제외 -> check로 체크
 
-고집이 너무 쎄 틀린건 틀린거여
+did를 리스트로 놨을 때보다 set으로 놨을 때 훨씬 빨라짐
+    8 8
+    1 2 3 4 5 6 7 8로 확인
+set은 리스트 안들어감 튜플 들어감
 '''
 
 import sys
-from collections import deque
 
-def bfs():
-    global has_parent, dct
-    q = deque()
-    q.append(1)
+def dfs():
+    global lst, m, n, result, check
+    if len(result) == m:
+        if tuple(result) in did:
+            pass
+        else:
+            print(*result)
+            did.add(tuple(result[:]))
+    else:
+        for i in range(n):
+            if check[i]:
+                continue
+            else:
+                result.append(lst[i])
+                check[i]=True
+                dfs()
+                check[i]=False
+                result.pop()
 
-    while q:
-        start = q.popleft()
+n, m = map(int, sys.stdin.readline().split())
+lst = sorted(list(map(int, sys.stdin.readline().split())))
+check = [False]*len(lst)
+result = []
+did = set()
 
-        for i in dct[start]:
-            if has_parent[i] == -1:
-                has_parent[i] = start
-                q.append(i)
-
-n = int(sys.stdin.readline())
-dct = {i:[] for i in range(1, n+1)}
-has_parent = [-1]*(n+1)
-
-has_parent[1] = 1
-
-for _ in range(n-1):
-    a, b = map(int, sys.stdin.readline().split())
-    dct[a].append(b)
-    dct[b].append(a)
-
-bfs()
-
-# print(dct)
-for i in has_parent[2:]:
-    print(i)
+dfs()
