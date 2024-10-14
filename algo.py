@@ -1,74 +1,55 @@
 '''
-과장하고싶은데 몇몇 사람은 그 이야기의 진실을 안다.
-진실을 아는 사람들 앞에선 과장 못함
-어떤 사람이 어떤 파티에서는 진실을 듣고 또 다른 파티에서는 과장된 이야기를 들었을 때 거짓말쟁이 됨 -> 클러스터
+3의 배수: 3나눠
+2의 배수: 2나눠
+1빼
 
-첫 줄: 사람 수, 파티 수
-둘째 줄: 진실을 아는 사람 수, 번호
-셋째 줄~: 파티에 오는 사람 수, 번호
-
-진실을 아는 사람 set을 하나 만들어
-만난 집단 set의 리스트 만들어서 진실을 아는 사람, 알게된 사람을 산정해
-
-집단 사이의 연결고리가 필요해
-(1,2), (3,4), (2,3) 주면 합쳐져?
-
-union-find 알고리즘이 있대: parent로 cluster 구분하는 알고리즘
-코테책 그래프 마지막 부분에 있는거네 부모 찾기? 서로소 집합!!
-
-union-find: 같은 클러스터 내의 가장 작은 요소를 루트로 두는 클러스터링
-find_parent: 클러스터의 구분을 위한거 (너는 몇 번 클러스터)
-union: 
+1,000,000보다 작거나 같은 자연수가 1메가바이트??
+메모리 512mb
 '''
 
-def find_parent(x):
-    global parent
-
-    if parent[x] != x:
-        parent[x] = find_parent(parent[x])
-    return parent[x]
-
-def union(x, y):
-    global parent
-
-    parent_x = find_parent(x)
-    parent_y = find_parent(y)
-    if parent_x != parent_y:
-        parent[max(parent_x, parent_y)] = min(parent_x, parent_y)
-
 import sys
-n, m = map(int, sys.stdin.readline().split())
-truth=None
-clusters=[]
+from collections import deque
+import copy
 
-second_input = sys.stdin.readline().rstrip()
-if len(second_input) == 1:
-    for i in range(m):
-        sys.stdin.readline()
-    print(m)
+x=int(sys.stdin.readline())
 
-else:
-    truth = set(map(int, second_input[2:].split()))
-    parties = []
-    parent = list(range(n+1))
-    for _ in range(m):
-        lst = list(map(int, sys.stdin.readline().split()))
-        party = lst[1:]
-        parties.append(party)
-        for i in range(1, len(party)):
-            union(party[i-1], party[i])
+dp=[float('inf')]*(int(1e+6)+1)
+q = deque()
 
-    truth = set(find_parent(i) for i in truth)   # truth에 있는 사람들과 연결되면 걔도 truth
+dp[x]=0
+dct={x:[x]}
 
-    for party in parties:
-        check = True
-        for i in party:
-            if find_parent(i) in truth:
-                check = False
-                break
-        if check:
-            continue
+q.append(x)
+
+while dp[1] == float('inf'):
+    x = q.popleft()
+    if x % 3 == 0:
+        if dp[x//3] > dp[x]+1:
+            dp[x//3] = dp[x]+1
+            q.append(x//3)
+            if x // 3 in dct.keys():
+                dct[x//3].append(x//3)
+            else:
+                dct[x//3] = copy.deepcopy(dct[x])
+                dct[x//3].append(x//3)
+    if x % 2 == 0:
+        if dp[x//2] > dp[x]+1:
+            dp[x//2] = dp[x]+1
+            q.append(x//2)
+            if x // 2 in dct.keys():
+                dct[x//2].append(x//2)
+            else:
+                dct[x//2] = copy.deepcopy(dct[x])
+                dct[x//2].append(x//2)
+    if dp[x-1] > dp[x]+1:
+        dp[x-1] = dp[x]+1
+        if x-1 in dct.keys():
+            dct[x-1].append(x-1)
         else:
-            m-=1
-    
-    print(m)
+            dct[x-1] = copy.deepcopy(dct[x])
+            dct[x-1].append(x-1)
+    if x-1 > 1:
+        q.append(x-1)
+
+print(dp[1])
+print(*dct[1])
