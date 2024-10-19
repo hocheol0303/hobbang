@@ -1,58 +1,30 @@
 '''
-n, m, x : 학생 수, 길 수, 목적지
+맨 앞 10은 고정
+(0으로 끝나는거 개수 * 2) + (1로 끝나는거 개수)
 
-컨닝
+n = 1: 1
+    0으로 끝나는거 0, 1로 끝나는거 1
+n = 2: 10
+    0으로 끝나는거 1, 1로 끝나는거 0 : 0에서 파생 0, 1에서 파생 1
+n = 3: 100, 101
+    0으로 끝나는거 1, 1로 끝나는거 1 : 0에서 파생 2, 1에서 파생 0
+n = 4: 1000, 1001, 1010
+    0으로 끝나는거 2, 1로 끝나는거 1 : 0에서 파생 2, 1에서 파생 1
+n = 5: 10000, 10001, 10010, 10100, 10101
+    0으로 끝나는거 3, 1로 끝나는거 2 : 0에서 파생 4, 1에서 파생 1
+
+n = k에서의 규칙
+    k-1에서 0의 개수만큼 0, 1의 개수만큼 0, 0의 개수만큼 1
 '''
 
 import sys
-import heapq
+n = int(sys.stdin.readline())
+zeros = [0]
+ones = [1]
 
-def dijkstra(start):
-    global x, costs
-    s = start
-    heap = []
-    heapq.heappush(heap, (0, start))
-    costs = [float('inf')]*(n+1)
-    
-    while heap:
-        cost, start = heapq.heappop(heap)
-        if costs[start] != float('inf'):
-            continue
-        else:
-            costs[start] = cost
-            if costs[start] < cost:
-                continue
-            else:
-                for n_cost, dest in grp[start]:
-                    if costs[dest] > cost+n_cost:
-                        heapq.heappush(heap, (cost+n_cost, dest))
-    
-    if s == x:
-        return costs
-    return costs[x]
 
-n, m, x = map(int, sys.stdin.readline().split())
-grp = [[] for _ in range(n+1)]
+for i in range(1, n):
+    zeros.append(zeros[-1] + ones[-1])
+    ones.append(zeros[-2])
 
-come_cost = None
-go_cost = [float('inf')]*(n+1)
-
-for _ in range(m):
-    start, dest, cost = map(int, sys.stdin.readline().split())
-    grp[start].append((cost, dest))
-
-for i in range(1, n+1):
-    if i == x:
-        come_cost = dijkstra(x)
-    else:
-        go_cost[i] = dijkstra(i)
-
-max_ = 0
-for i in range(1, n+1):
-    if go_cost[i]+come_cost[i] == float('inf'):
-        continue
-    else:
-        max_ = max(max_, go_cost[i]+come_cost[i])
-
-# print(go_cost, come_cost)
-print(max_)
+print(zeros[-1] + ones[-1])
