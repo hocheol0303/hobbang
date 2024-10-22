@@ -1,49 +1,38 @@
 '''
-최단시간, 최단시간 개수
-x+1, x-1, 2*x로 이동
+아이디어 컨닝함: 2차원 DP행렬
 
-3 0에서 3 1이 뜸 -> dp[n+1] > dp[n]+1 if문을 dp[n+1] >= dp[n]+1로 바꿈
-0 0일 때 정답: 0 1, 내 답: 0 0
-들여쓰기 이녀석아
+위에꺼 따라가다가 같은글자 만나면 1 올리고 뒤로 쭉쭉 -> 점화식
+
+ACAYKP
+CAPCAK
+
+  A C A Y K P
+C 0 1 1 1 1 1
+A 1 1 2 2 2 2
+P 1 1 2 2 2 3
+C 1 1 2 2 2 3
+A 1 2 3 3 3 3
+K 1 2 3 3 4 4
+
+DP 테이블: 0 패딩 만들어쓰자
+같은 문자열 나오면 dp[i-1][j-1] + 1
 '''
 
 import sys
-from collections import deque
 
-n, k = map(int, sys.stdin.readline().split())
-dp = [float('inf')]*100001
-count = [0]*100001
-q = deque()
+str1 = sys.stdin.readline().rstrip()
+str2 = sys.stdin.readline().rstrip()
 
-q.append(n)
-dp[n] = 0
+dp = [[0]*(len(str2)+1) for _ in range(len(str1)+1)]
 
-while q:
-    n = q.popleft()
+for i in range(1, len(str1)+1):
+    for j in range(1, len(str2)+1):
+        if str1[i-1] == str2[j-1]:
+            dp[i][j] = dp[i-1][j-1] + 1
+        else:
+            dp[i][j] = max(dp[i-1][j], dp[i][j-1])
 
-    if n+1 <= 100000:
-        if dp[n+1] >= dp[n]+1:
-            dp[n+1] = dp[n]+1
-            q.append(n+1)
-    if n-1 >= 0:
-        if dp[n-1] >= dp[n]+1:
-            dp[n-1] = dp[n]+1
-            q.append(n-1)
-    if n*2 <= 100000:
-        if dp[n*2] >= dp[n]+1:
-            dp[n*2] = dp[n]+1
-            q.append(n*2)
-    
-    if n == k:
-        count[dp[k]] += 1
+# for i in dp:
+#     print(i)
 
-    # if dp[n]+1 <= 100000:
-        # if n+1 == k:
-        #     count[dp[n]+1] += 1
-        # if n-1 == k:
-        #     count[dp[n]+1] += 1
-        # if n*2 == k:
-        #     count[dp[n]+1] += 1
-
-print(dp[k])
-print(count[dp[k]])
+print(dp[-1][-1])
