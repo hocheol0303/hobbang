@@ -1,63 +1,37 @@
 '''
-다른 모든 회원과 친구이면(1층) 1점
-모든 회원과 친구(1층), 친구의 친구(2층)이면 2점
-점수 오름차순 전부
+n개의 정수로 이루어진 수열에서
+원소의 합이 s인 부분수열의 개수
+
+부분수열 중복 안받아?
+5 -2
+-1 -1 -1 -1 -1
+에 대해서 1이 정답임? 함 해보자 아니네
+
+5 0
+0 0 0 0 0
+정답: 31
+이거 어케하냐
 '''
 
+def dfs(start):
+    global n, s, hi, ans, check
+    if s == sum(hi) and len(hi) != 0 :
+       ans += 1 
+    #    check.add(tuple(hi))
+    #    print(*hi)
+    # else: # else가 아니래!!~!@!!~$#ㄸ@!~#@~@!~~@#!~#@
+    for i in range(start, n):
+        hi.append(lst[i])
+        dfs(i+1)
+        hi.pop()
+
 import sys
-from collections import deque
 
-def bfs(s):
-    global dct, lst, n
-    q = deque()
+n, s = map(int, sys.stdin.readline().split())
+lst = list(map(int, sys.stdin.readline().split()))
+hi = []
+ans = 0
+# check = set()
 
-    visited = [False]*(n+1)
-    start = s
-    depth = 0
-    visited[start]=True
-    q.append((start, depth))
-
-    max_depth = 0
-    while q:
-        start, depth = q.popleft()
-        max_depth = max(max_depth, depth)
-
-        for i in dct[start]:
-            if visited[i]:
-                continue
-            else:
-                q.append((i, depth+1))
-                visited[i] = True
-    
-    lst[s][1] = max_depth
-    
-
-
-n = int(sys.stdin.readline())
-dct = {i:[] for i in range(1, n+1)}
-lst = [[i,0] for i in range(n+1)]       # 0번이 회원번호 1번이 점수
-
-while True:
-    node1, node2 = map(int, sys.stdin.readline().split())
-    if node1 == -1 and node2 == -1:
-        break
-    else:
-        dct[node1].append(node2)
-        dct[node2].append(node1)
-
-for i in range(1, n+1):
-    bfs(i)
-
-lst.sort(key=lambda x:x[1])
-
-min_score = lst[1][1]
-bosses = []
-
-for num, score in lst[1:]:
-    if score != min_score:
-        break
-    else:
-        bosses.append(num)
-
-print(min_score, len(bosses))
-print(*bosses)
+dfs(0)
+print(ans)
