@@ -1,48 +1,28 @@
 '''
-컨닝: 0 먼저 돌기(appendleft)
+베껴쓰: 끝나는 시간을 각 회의실의 정체성으로 둬
 '''
 
 import sys
-from collections import deque
+import heapq
 
-def bfs(start):
-    global count, lst, n, m
-    row, col = start
-    d_row = [-1, 1, 0, 0]
-    d_col = [0, 0, -1, 1]
-    q = deque()
-    q.append((row, col))
-
-
-    while q:
-        row, col = q.popleft()
-
-        for i in range(4):
-            n_row, n_col = row+d_row[i], col+d_col[i]
-            if 0 <= n_row < m and 0 <= n_col < n:
-                if lst[n_row][n_col] == 0:
-                    if count[n_row][n_col] > count[row][col]:
-                        count[n_row][n_col] = count[row][col]
-                        q.appendleft((n_row, n_col))
-                else:
-                    if count[n_row][n_col] > count[row][col]+1:
-                        q.append((n_row, n_col))
-                        count[n_row][n_col] = count[row][col]+1
-
-n, m = map(int, sys.stdin.readline().split())
+n = int(sys.stdin.readline())
 lst=[]
-count=[[float('inf')]*n for _ in range(m)]
+heap=[]
 
-for _ in range(m):
-    lst.append(list(map(int, list(sys.stdin.readline().rstrip()))))
+for _ in range(n):
+    lst.append(tuple(map(int, sys.stdin.readline().split())))
 
-count[0][0] = 0
-bfs((0,0))
+# 시작시간 순으로 정렬해
+lst.sort()
 
-# for i in lst:
-#     print(i)
-# print()
-# for i in count:
-#     print(i)
+# print(lst)
+heap.append(lst.pop(0)[1])
 
-print(count[-1][-1])
+for start, end in lst:
+    if heap[0] > start:
+        heapq.heappush(heap, end)
+    else:
+        heapq.heappop(heap)
+        heapq.heappush(heap, end)
+
+print(len(heap))
