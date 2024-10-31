@@ -1,117 +1,60 @@
 '''
-공청 항상 1열에 존재, 두 행 차지
+1번 정점에서 n번 정점으로 이동할 때, 주어진 두 정점을 반드시 거치면서 최단경로로 이동하기
 
-1초
-1. 미세먼지가 있는 모든 칸에서 확산
-4방향
-인접한 방향에 공청 있거나 칸이 없으면 그방향 확산 x
-확산되는 양은 A_{r,c}//5
-(r,c)에 남은 미세먼지의 양은 A_{r,c} - (A_{r,c}//5 * 확산된 방향 개수)
+v1, v2 연결하고 start - v1 - v2 - end, 또는 start - v2 - v1 - end
+start->v1 + v2->end  vs.  start->v2 + v1->end
 
-2.공청
-공청 바람 나옴
-위쪽은 반시계방향 순환, 아래쪽은 시계방향 순환
-바람 불면 미세먼지가 바람의 방향대로 모두 한 칸씩 이동
-공청에서 부는 바람은 미세먼지가 없는 바람이고, 공청으로 들어간 미세먼지는 모두 정화됨
+start, end를 ans에 넣는 아주 멍청한 짓 함
 
-t초 후 남아있는 미세먼지 양
-
-r,c,t
+weights[dest]에 방문하면 바로 나가기로 바꿈 -> 틀렸어
 '''
+
 import sys
-from collections import deque
+import heapq
 
-def dust_spread():
-    global r, c, lst
-    q = deque()
-
-    d_row = [-1, 1, 0, 0]
-    d_col = [0, 0, -1, 1]
-
-    for i in range(r):
-        for j in range(c):
-            if not (lst[i][j] == 0 or lst[i][j] == -1): 
-                q.append((i,j,lst[i][j]))
+def find(start, end):
+    global lst, n
+    heap = []
+    weights = [float('inf')] * (n+1)
+    weights[start] = 0
+    heapq.heappush(heap, (0, start))
     
-    while q:
-        row, col, dust_amount = q.popleft()
-        count = 0
-        spread_amount = dust_amount // 5
-        for i in range(4):
-            n_row, n_col = row + d_row[i], col + d_col[i]
-            if 0 <= n_row < r and 0 <= n_col < c and lst[n_row][n_col] != -1:
-                count += 1
-                lst[n_row][n_col] += spread_amount
+    while heap:
+        weight, dest = heapq.heappop(heap)
 
-        lst[row][col] -= spread_amount * count
-                
-def operate_purifier():
-    # 위쪽은 반시계, 아래쪽은 시계
-    global purifier_pos, r, c, lst
+        if weights[dest] < weight:
+            continue
 
-    # 위쪽: 상 - 우 - 하 - 좌 순으로 땡겨땡겨
-    pur_r, pur_c = purifier_pos[0]
-    row, col = pur_r, pur_c
-    lst[row-1][0] = 0
-    row -= 1
-    while row > 0:
-        lst[row][0] = lst[row-1][0]
-        row -= 1
-    lst[row][0] = 0
-    while col < c-1:
-        lst[0][col] = lst[0][col+1]
-        col += 1
-    lst[0][col] = 0
-    while row < pur_r:
-        lst[row][col] = lst[row+1][col]
-        row += 1
-    lst[row][col] = 0
-    while col > pur_c:
-        lst[row][col] = lst[row][col-1]
-        col -= 1
-    lst[row][col+1] = 0
+        weights[dest] = weight
+        for n_weight, n_dest in lst[dest]:
+            n_weight += weight
+            if n_weight < weights[n_dest]:
+                weights[n_dest] = n_weight
+                heapq.heappush(heap, (n_weight, n_dest))
+
+
+    return weights[end]
+
+n, e = map(int,sys.stdin.readline().split())
+lst = [[] for i in range(n+1)]
+
+for _ in range(e):
+    start, end, weight = map(int, sys.stdin.readline().split())
+    to_end = weight, end
+    to_start = weight, start
     
+    if to_end not in lst[start]:
+        lst[start].append(to_end)
+        lst[end].append(to_start)
 
-    #아래쪽: 하 - 우 - 상 - 좌 순으로 땡겨땡겨
-    pur_r, pur_col = purifier_pos[1]
-    row, col = pur_r, pur_c
-    lst[row+1][0] = 0
-    row += 1
-    while row < r-1:
-        lst[row][0] = lst[row+1][0]
-        row += 1
-    lst[row][0] = 0
-    while col < c-1:
-        lst[row][col] = lst[row][col+1]
-        col += 1
-    lst[row][col] = 0
-    while row > pur_r:
-        lst[row][col] = lst[row-1][col]
-        row -= 1
-    lst[row][col] = 0
-    while col > 0:
-        lst[row][col] = lst[row][col-1]
-        col -= 1
-    lst[row][col+1] = 0
+v1, v2 = map(int, sys.stdin.readline().split())
 
-r, c, t = map(int, sys.stdin.readline().split())
-lst = []
+# v1, v2 연결하고 start - v1 - v2 - end, 또는 start - v2 - v1 - end
+# start->v1 + v2->end  vs.  start->v2 + v1->end
+ans = min(find(1,v1)+find(v2,n), find(1,v2)+find(v1,n)) + find(v1,v2)
 
-purifier_pos = None
-
-for row in range(r):
-    lst.append(list(map(int, sys.stdin.readline().split())))
-    if purifier_pos == None and lst[-1][0] == -1:
-        purifier_pos = ((row, 0), (row+1, 0))
-
-
-for _ in range(t):
-    dust_spread()
-    operate_purifier()
-
-ans = 0
-# print()
-for i in lst:
-    # print(i)
-    ans += sum(i)
-print(ans+2)
+# print(lst)
+if ans == float('inf'):
+    print(-1)
+else:
+    print(ans)
