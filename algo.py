@@ -1,24 +1,24 @@
 '''
-1. 끝 값 처리: n = 1일 때
-2. 조건이 맞는데 더 가까이에 조건 맞는게 있을 때
-    5
-    1 8 2 3 9
+각 단마다 0~9로 끝나는 수 개수 세기
+전단계에서 본인 ±1들의 개수 합이 본인 개수
 '''
+
 import sys
-
 n = int(sys.stdin.readline())
-lst = list(map(int, sys.stdin.readline().split()))
-dp = [0]*n
-dp[0] = lst[0]
-max_ = lst[0]
+lst1 = [1]*10
+lst1[0] = 0
+lst2 = [0]*10
 
-for i in range(1, n):
-    for j in range(i-1, -1, -1):
-        if lst[j] < lst[i]:
-            dp[i] = max(lst[i] + dp[j], dp[i])
-    if dp[i] == 0:
-        dp[i] = lst[i]
-    max_ = max(max_, dp[i])
+for _ in range(n-1):
+    for i in range(10):
+        if i == 0:
+            lst2[i] = lst1[i+1]
+        elif i == 9:
+            lst2[i] = lst1[i-1]
+        else:
+            lst2[i] = lst1[i-1]+lst1[i+1]
+        
+    lst1, lst2 = lst2, lst1
 
-# print(dp)
-print(max_)
+# print(lst1, lst2)
+print(sum(lst1)%1000000000)
