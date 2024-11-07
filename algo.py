@@ -1,39 +1,43 @@
-'''
-n개가 포함된 카드팩
-개수가 적은 팩이더라도 가격이 비싸면 높은 등급의 카드가 많이 들어있을거라고 믿는다.
-카드가 i개 포함된 카드팩의 가격은 Pi원
-지불해야하는금액의 최댓값
-
-개당 가격을 생각해? x
-개수당 최댓값으로 dp 만들어
-    1개 살 때 최댓값, 2개 살 때 최댓값, ...
-    아닌거 같아
-
-dp의 인덱스를 뭐로 생각해야 활용할 수 있을까
-    최대 묶음 개수?
-
-n개 살 때 최댓값을 구해놓고 최대 n묶음일 때 최댓값을 구하기
-
-미친 반례 벽 느껴지는데
-12
-1 1 6 8 11 1 1 1 1 1 1 1
-GPT
-'''
+# 그냥 리스트는 너무 크니까 연결리스트로 어디서 온게 짱인지 알기
 
 import sys
+from collections import deque
 
-n = int(sys.stdin.readline())
-lst = [0] + list(map(int, sys.stdin.readline().split()))
-dp = [0] * (n+1)
-# print(lst[1:])
+def bfs(start, end):
+    global lst
+    q = deque()
+    q.append(start)
+    lst[start][0] = 0
 
-for i in range(1, n+1):
-    # i묶음 이하로만 묶을 수 있을 때 최댓값
-    # dp[i] = lst[i] * (n//i) + lst[n%i]
-    for j in range(1, i+1):
-        dp[i] = max(dp[i], lst[j]+dp[i-j])
+    while lst[end][0] == float('inf'):
+        start = q.popleft()
 
-# print(lst)
-# print(dp)
+        if start+1 <= 100000 and lst[start+1][0] > lst[start][0]+1:
+            lst[start+1][0] = lst[start][0]+1
+            lst[start+1][1] = start
+            q.append(start+1)
+        if start-1 >= 0 and lst[start-1][0] > lst[start][0]+1:
+            lst[start-1][0] = lst[start][0]+1
+            lst[start-1][1] = start
+            q.append(start-1)
+        if start*2 <= 100000 and lst[start*2][0] > lst[start][0]+1:
+            lst[start*2][0] = lst[start][0]+1
+            lst[start*2][1] = start
+            q.append(start*2)
 
-print(dp[-1])
+n, k = map(int, sys.stdin.readline().split())
+
+lst = [[float('inf'), i] for i in range(100001)]
+
+bfs(n, k)
+
+print(lst[k][0])
+
+stack = []
+
+while lst[k][1] != k:
+    stack.append(k)
+    k = lst[k][1]
+
+stack.append(k)
+print(*stack[::-1])
