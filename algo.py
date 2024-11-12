@@ -1,35 +1,28 @@
+'''
+쫙 써놓고 규칙찾기 실패
+뭔가 겹치는데 배수?? ㅁㄹ겠셔
+배수가 되는거 다 버리고 나누어떨어지는 것만 추가 - 안됨
+컨닝 슈웃
+테이블 만들어놓고 갱신하는데, 뭔가.. 뭔가..
+'''
+
 import sys
 from collections import deque
 
-def bfs(row, col):
-    global lst, w, h
-    d_row = [-1, -1, 0, 1, 1, 1, 0, -1]
-    d_col = [0, 1, 1, 1, 0, -1, -1, -1]
-    q = deque()
-    q.append((row, col))
-    lst[row][col] = '.'
+n, k = map(int, sys.stdin.readline().split())
+lst = []
 
-    while q:
-        row, col = q.popleft()
-        for i in range(8):
-            n_row, n_col = row+d_row[i], col+d_col[i]
-            if 0 <= n_row < h and 0 <= n_col < w and lst[n_row][n_col] == 1:
-                lst[n_row][n_col] = '.'
-                q.append((n_row, n_col))
+dp = [0]*(k+1)
+dp[0] = 1
 
+for _ in range(n):
+    lst.append(int(sys.stdin.readline()))
 
-while True:
-    w, h = map(int, sys.stdin.readline().split())
-    if w == 0 and h == 0:
-        break
-    else:
-        count = 0
-        lst = []
-        for _ in range(h):
-            lst.append(list(map(int, sys.stdin.readline().split())))
-        for r in range(h):
-            for c in range(w):
-                if lst[r][c] == 1:
-                    count += 1
-                    bfs(r, c)
-        print(count)
+# lst.sort()
+
+for i in range(n):
+    for j in range(lst[i], k+1):
+        dp[j] += dp[j-lst[i]]
+
+print(dp[-1])
+# print(lst)
