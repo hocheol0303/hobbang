@@ -1,28 +1,49 @@
 '''
-쫙 써놓고 규칙찾기 실패
-뭔가 겹치는데 배수?? ㅁㄹ겠셔
-배수가 되는거 다 버리고 나누어떨어지는 것만 추가 - 안됨
-컨닝 슈웃
-테이블 만들어놓고 갱신하는데, 뭔가.. 뭔가..
+m, n, k
+분리된 영역 개수, 넓이
 '''
 
 import sys
 from collections import deque
 
-n, k = map(int, sys.stdin.readline().split())
-lst = []
+def bfs(r, c):
+    global lst, m, n
+    q = deque()
+    area = 0
+    d_row = [-1, 1, 0, 0]
+    d_col = [0, 0, -1, 1]
 
-dp = [0]*(k+1)
-dp[0] = 1
+    q.append((r, c))
+    lst[r][c] = 2
+    area += 1
 
-for _ in range(n):
-    lst.append(int(sys.stdin.readline()))
+    while q:
+        r, c = q.popleft()
+        for i in range(4):
+            n_row, n_col = r+d_row[i], c+d_col[i]
+            if 0 <= n_row < m and 0 <= n_col < n and lst[n_row][n_col] == 0:
+                q.append((n_row, n_col))
+                lst[n_row][n_col] = 2
+                area += 1
 
-# lst.sort()
+    return area
 
-for i in range(n):
-    for j in range(lst[i], k+1):
-        dp[j] += dp[j-lst[i]]
+m, n, k = map(int, sys.stdin.readline().split())
+lst = [[0]*n for _ in range(m)]
+box = [list(map(int, sys.stdin.readline().split())) for _ in range(k)]
+areas = []
 
-print(dp[-1])
-# print(lst)
+for c1, r1, c2, r2 in box:
+    for r in range(r1, r2):
+        for c in range(c1, c2):
+            lst[r][c] = 1
+
+for r in range(m):
+    for c in range(n):
+        if lst[r][c] == 0:
+            areas.append(bfs(r, c))
+
+# for i in lst:
+#     print(i)
+print(len(areas))
+print(*sorted(areas))
